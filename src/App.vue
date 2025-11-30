@@ -157,7 +157,6 @@ watch(isMenuOpen, (open) => {
                   « Je garde les pieds sur le terrain et les yeux sur les indicateurs. L’un ne va pas sans l’autre. »
                 </p>
                 <div class="hero-floating-tag">
-                  <span class="dot"></span>
                   Shift, ouverture, fermeture, caisse, équipe : tout est sous contrôle.
                 </div>
               </div>
