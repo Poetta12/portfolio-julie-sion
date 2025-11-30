@@ -1,4 +1,5 @@
 <script setup>
+import { ref, watch } from 'vue'
 import juliePhoto from './assets/julie.jpg'
 
 const scrollToId = (id) => {
@@ -7,12 +8,30 @@ const scrollToId = (id) => {
     el.scrollIntoView({ behavior: 'smooth' })
   }
 }
+
+// État du menu mobile
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const closeMenuAndScroll = (id) => {
+  isMenuOpen.value = false
+  scrollToId(id)
+}
+
+// Bloquer le scroll quand le menu est ouvert (comme ton site)
+watch(isMenuOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
 </script>
 
 <template>
   <div class="page-root">
     <div class="bg-orb"></div>
 
+    <!-- NAVBAR -->
     <header class="nav">
       <div class="container nav-inner">
         <div class="nav-logo">
@@ -24,7 +43,9 @@ const scrollToId = (id) => {
             <span>Adjointe en magasin – Retail</span>
           </div>
         </div>
-        <nav class="nav-links">
+
+        <!-- Liens desktop -->
+        <nav class="nav-links nav-links-desktop">
           <a href="#about" @click.prevent="scrollToId('about')">À propos</a>
           <a href="#experience" @click.prevent="scrollToId('experience')">Expérience</a>
           <a href="#skills" @click.prevent="scrollToId('skills')">Compétences</a>
@@ -33,43 +54,76 @@ const scrollToId = (id) => {
             Me contacter
           </button>
         </nav>
+
+        <!-- Burger mobile -->
+        <button
+          type="button"
+          class="nav-burger"
+          :class="{ 'nav-burger-open': isMenuOpen }"
+          @click="toggleMenu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
+
+      <!-- Overlay menu mobile -->
+      <transition name="nav-overlay">
+        <div v-if="isMenuOpen" class="nav-overlay">
+          <div class="nav-overlay-inner">
+            <div class="nav-overlay-header">
+              <div class="nav-logo">
+                <div class="logo-mark">
+                  <div class="logo-mark-inner">JS</div>
+                </div>
+                <div class="nav-title">
+                  <span>Julie Sion</span>
+                  <span>Adjointe en magasin – Retail</span>
+                </div>
+              </div>
+              <button type="button" class="nav-overlay-close" @click="toggleMenu">
+                ✕
+              </button>
+            </div>
+
+            <ul class="nav-overlay-list">
+              <li>
+                <button type="button" @click="closeMenuAndScroll('top')">
+                  Accueil
+                </button>
+              </li>
+              <li>
+                <button type="button" @click="closeMenuAndScroll('about')">
+                  À propos
+                </button>
+              </li>
+              <li>
+                <button type="button" @click="closeMenuAndScroll('experience')">
+                  Expérience
+                </button>
+              </li>
+              <li>
+                <button type="button" @click="closeMenuAndScroll('skills')">
+                  Compétences
+                </button>
+              </li>
+              <li>
+                <button type="button" @click="closeMenuAndScroll('contact')">
+                  Contact
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </transition>
     </header>
 
     <main class="page">
       <!-- HERO -->
       <section class="hero" id="top">
         <div class="container hero-grid">
-          <div>
-            <div class="hero-badge">
-              <span class="chip">
-                <span class="chip-dot"></span>
-                Disponible pour opportunités retail &amp; management
-              </span>
-            </div>
-            <h1 class="hero-title">
-              Adjointe qui fait tourner<br />
-              <span class="accent">le magasin et l'équipe.</span>
-            </h1>
-            <p class="hero-subtitle">
-              <strong>7 ans d’expérience terrain</strong> en vente et management, du comptoir à la gestion d’équipe.
-              Aujourd’hui adjointe en magasin chez <strong>Chevalier</strong>, Julie pilote le quotidien du point de
-              vente, la performance et l’expérience client.
-            </p>
-            <div class="hero-actions">
-              <a href="Julie_Sion_cv.pdf" class="btn btn-primary">
-                Télécharger le CV
-              </a>
-              <button class="btn btn-ghost" @click="scrollToId('experience')">
-                Voir le parcours
-              </button>
-            </div>
-            <p class="hero-tagline">
-              Management de proximité, organisation millimétrée, priorité au client : une adjointe capable de tenir un
-              shift comme de faire monter l’équipe en puissance.
-            </p>
-          </div>
-
+          <!-- VISUEL CARTE (en haut sur mobile) -->
           <div class="hero-visual">
             <article class="hero-card">
               <div class="hero-card-inner">
@@ -103,11 +157,43 @@ const scrollToId = (id) => {
                   « Je garde les pieds sur le terrain et les yeux sur les indicateurs. L’un ne va pas sans l’autre. »
                 </p>
                 <div class="hero-floating-tag">
+                  <span class="dot"></span>
                   Shift, ouverture, fermeture, caisse, équipe : tout est sous contrôle.
                 </div>
               </div>
               <div class="hero-ring"></div>
             </article>
+          </div>
+
+          <!-- TEXTE HERO -->
+          <div>
+            <div class="hero-badge">
+              <span class="chip">
+                <span class="chip-dot"></span>
+                Disponible pour opportunités retail &amp; management
+              </span>
+            </div>
+            <h1 class="hero-title">
+              Adjointe qui fait tourner<br />
+              <span class="accent">le magasin et l'équipe.</span>
+            </h1>
+            <p class="hero-subtitle">
+              <strong>7 ans d’expérience terrain</strong> en vente et management, du comptoir à la gestion d’équipe.
+              Aujourd’hui adjointe en magasin chez <strong>Chevalier</strong>, Julie pilote le quotidien du point de
+              vente, la performance et l’expérience client.
+            </p>
+            <div class="hero-actions">
+              <a href="Julie_Sion_cv.pdf" class="btn btn-primary">
+                Télécharger le CV
+              </a>
+              <button class="btn btn-ghost" @click="scrollToId('experience')">
+                Voir le parcours
+              </button>
+            </div>
+            <p class="hero-tagline">
+              Management de proximité, organisation millimétrée, priorité au client : une adjointe capable de tenir un
+              shift comme de faire monter l’équipe en puissance.
+            </p>
           </div>
         </div>
       </section>
@@ -423,12 +509,10 @@ const scrollToId = (id) => {
               </p>
             </div>
             <div class="contact-details">
-              <span><span class="dot"></span> Basée à Seynod (74600)</span>
+              <span><span class="dot"></span> Basée à Annecy</span>
               <span><span class="dot"></span> Email :
                 <a href="mailto:julie.sionpro@gmail.com">julie.sionpro@gmail.com</a>
               </span>
-              <!-- Afficher le téléphone uniquement si vous êtes OK de le mettre en ligne -->
-              <!-- <span><span class="dot"></span> Tél. : 06 XX XX XX XX</span> -->
               <span><span class="dot"></span> Permis B – véhiculée</span>
             </div>
           </div>
@@ -438,6 +522,8 @@ const scrollToId = (id) => {
 
     <footer class="footer">
       Portfolio réalisé pour présenter le parcours professionnel de Julie Sion. Contenu basé sur son CV et son expérience réelle.
+      <br>
+      <div id="footerRights"><p class="icon-copyright">2012 PoettaTech. All Rights Reserved |</p><p>Designed &amp; created by <span>Poetta</span>@PoettaTech WSDS</p></div>
     </footer>
   </div>
 </template>
