@@ -57,7 +57,7 @@ const scrollToId = (id) => {
               vente, la performance et l’expérience client.
             </p>
             <div class="hero-actions">
-              <a href="/src/assets/Julie_Sion_cv.pdf" class="btn btn-primary">
+              <a href="public/Julie_Sion_cv.pdf" class="btn btn-primary">
                 Télécharger le CV
               </a>
               <button class="btn btn-ghost" @click="scrollToId('experience')">
